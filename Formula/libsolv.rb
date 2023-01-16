@@ -32,6 +32,7 @@ class Libsolv < Formula
 
     mkdir "build" do
       system "cmake", "..", *args, *std_cmake_args
+      system "make"
       system "make", "install"
     end
   end
