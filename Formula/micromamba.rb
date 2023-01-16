@@ -27,7 +27,7 @@ class Micromamba < Formula
 
   # host dependencies
   depends_on "cli11" # TODO: specify version
-  # depends_on "cpp-expected"
+  depends_on "tl-expected" # TODO: add formula as well
   depends_on "nlohmann-json"
   depends_on "spdlog" # TODO: specify version
   depends_on "fmt"
@@ -45,12 +45,19 @@ class Micromamba < Formula
 
   def install
 
+    # install vcpkg and tl-expected
+    # system "git clone https://github.com/Microsoft/vcpkg.git"
+    # system "./vcpkg/bootstrap-vcpkg.sh"
+    # ENV["VCPKG_ROOT"] = './vcpkg'
+    # system "vcpkg install tl-expected"
+
     build_args = %W[
       -DBUILD_LIBMAMBA=ON
       -DBUILD_SHARED=ON
       -DBUILD_MICROMAMBA=ON
       -DMICROMAMBA_LINKAGE=DYNAMIC
     ]
+    # -DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake
 
     # mkdir "build"
     system "cmake", "-B", "build/", *(std_cmake_args + build_args)
