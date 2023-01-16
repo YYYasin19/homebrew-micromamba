@@ -33,8 +33,6 @@ class Libsolv < Formula
     mkdir "build" do
       system "cmake", "..", *args, *std_cmake_args
       system "make", "install"
-      lib.install "src/libsolv.dylib"
-      lib.install "src/libsolv.a"
     end
   end
 
