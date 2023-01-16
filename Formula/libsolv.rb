@@ -3,16 +3,16 @@ class Libsolv < Formula
   homepage "https://github.com/openSUSE/libsolv"
   url "https://github.com/openSUSE/libsolv/archive/refs/tags/0.7.23.tar.gz"
   sha256 "0286155964373c6cc3802d025750786c3ee79608d5cb884598e110e3918bb2fe"
-  license "TODO"
-  head "https://github.com/openSUSE/libsolv"
+  license "BSD-3-Clause"
 
   depends_on "cmake" => :build
-  depends_on "swig" => :build
+  depends_on "zstd"
+  depends_on "xz"
 
   uses_from_macos "zlib"
 
   def install
-    args = %W[
+    args = %w[
       -DENABLE_STATIC=ON
       -DENABLE_SUSEREPO=ON
       -DENABLE_COMPS=ON
@@ -31,27 +31,50 @@ class Libsolv < Formula
     ]
 
     mkdir "build" do
-      system "cmake", "..", *args
-      system "make"
+      system "cmake", "..", *args, *std_cmake_args
+      system "make", "install"
       lib.install "src/libsolv.dylib"
       lib.install "src/libsolv.a"
     end
   end
 
   test do
+    # todo this is not the specification of a .solv file??
+    (testpath/"test.solv").write <<~EOS
+      solv
+
+      pool
+
+      solvable
+      name mypackage
+      version 1.0
+      arch x86_64
+      end
+
+      solvable
+      name mypackage
+      version 2.0
+      arch x86_64
+      end
+
+      repo
+
+      end
+    EOS
+
+    # no idea how the tools work
+    # system #{bin}/testsolv, "test.solv"
+
     (testpath/"test.cpp").write <<~EOS
       #include <solv/pool.h>
       #include <solv/repo.h>
-      #include <solv/repo_solv.h>
-      #include <solv/repo_rpmdb.h>
 
-      int main() {
+      int main(int argc, char **argv) {
         Pool *pool = pool_create();
-        Repo *repo = repo_create(pool, "test");
-        repo_add_solv(repo, "test.solv", 0);
-        repo_add_rpmdb(repo, 0, 0);
+
+        Repo *repo = repo_create(pool, "test.solv");
+
         pool_free(pool);
-        return 0;
       }
     EOS
     system ENV.cc, "test.cpp", "-I#{include}", "-L#{lib}", "-lsolv", "-o", "test"

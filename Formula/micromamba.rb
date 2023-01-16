@@ -5,28 +5,64 @@ class Micromamba < Formula
   desc ""
   homepage ""
   license ""
-  head "https://github.com/mamba-org/mamba"
+  head "https://github.com/mamba-org/mamba.git", branch: "main"
+  # url "https://github.com/mamba-org/mamba/archive/refs/tags/2023.01.16.tar.gz"
+  # url "https://github.com/mamba-org/mamba.git", :using => :git, :head => true
+  url "https://github.com/mamba-org/mamba/archive/refs/tags/2023.01.16.tar.gz"
+  # version "1.2"
 
-  # depends_on "cmake" => :build
+  # dependencies as in 
+  # https://github.com/mamba-org/mamba/blob/3390da9ab93424fd40d7584ea869b6ef27e212f8/micromamba/recipe/meta.yaml#L11
+  
+  # build dependencies
+  # needs c/cxx compiler -> already installed?
+  depends_on "cmake" => :build
+  depends_on "ninja" => :build
+
+  # marked as 'win'(dows)
+  depends_on "vcpkg" => :build
+  depends_on "python" => :build
+  uses_from_macos "curl" # depends_on "curlpp" => :build # c++ wrapper for libCURL
+  uses_from_macos "zlib"
+
+  # host dependencies
+  depends_on "cli11" # TODO: specify version
+  # depends_on "cpp-expected"
+  depends_on "nlohmann-json"
+  depends_on "spdlog" # TODO: specify version
+  depends_on "fmt"
+  depends_on "yaml-cpp"
+  depends_on "xz"
+  depends_on "libssh2"
+  depends_on "libarchive"
+  depends_on "krb5"
+  depends_on "libsolv"
+  depends_on "openssl" # TODO: libopenssl
+  depends_on "zstd"
+  depends_on "lz4"
+  depends_on "reproc"
+  # depends_on "reproc-cpp" # not available 
 
   def install
+
+    build_args = %W[
+      -DBUILD_LIBMAMBA=ON
+      -DBUILD_SHARED=ON
+      -DBUILD_MICROMAMBA=ON
+      -DMICROMAMBA_LINKAGE=DYNAMIC
+    ]
+
+    # mkdir "build"
+    system "cmake", "-B", "build/", *(std_cmake_args + build_args)
+    system "cmake", "--build", "build/"
+
+    # move final executable to the correct location
+    lib.install "build/micromamba/micromamba"
+
     # ENV.deparallelize  # if your formula fails when building in parallel
     # Remove unrecognized options if warned by configure
     # https://rubydoc.brew.sh/Formula.html#std_configure_args-instance_method
-    system "./configure", *std_configure_args, "--disable-silent-rules"
+    # system "./configure", *std_configure_args, "--disable-silent-rules"
     # system "cmake", "-S", ".", "-B", "build", *std_cmake_args
-  end
-
-  test do
-    # `test do` will create, run in and delete a temporary directory.
-    #
-    # This test will fail and we won't accept that! For Homebrew/homebrew-core
-    # this will need to be a test that verifies the functionality of the
-    # software. Run the test with `brew test micromamba`. Options passed
-    # to `brew install` such as `--HEAD` also need to be provided to `brew test`.
-    #
-    # The installed folder is not in the path, so use the entire path to any
-    # executables being tested: `system "#{bin}/program", "do", "something"`.
-    system "false"
   end
 end
