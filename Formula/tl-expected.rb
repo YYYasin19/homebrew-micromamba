@@ -8,9 +8,14 @@ class TlExpected < Formula
   depends_on "cmake" => :build
 
   def install
+
+    build_args = %W[
+      -DEXPECTED_ENABLE_TESTS=OFF
+      -DCMAKE_INSTALL_LIBDIR=lib
+    ]
+
     mkdir "build" do
-      system "cmake", "..", *std_cmake_args
-      system "make"
+      system "cmake", "..", *(std_cmake_args + build_args)
       system "make", "install"
     end
   end
