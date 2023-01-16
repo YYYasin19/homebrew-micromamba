@@ -46,7 +46,7 @@ class Micromamba < Formula
   test do
     assert_match version, shell_output("#{bin}/micromamba --version").strip
 
-    system "{bin}/micromamba", "create", "-n", "test", "python=3.9", "-y"
-    system "{bin}/micromamba", "run", "-n", "test", "python", "-c", "import sys; sys.exit(0)"
+    system "#{bin}/micromamba", "create", "-n", "test", "python=3.9", "-y"
+    system "#{bin}/micromamba", "run", "-n", "test", "python", "-c", "import sys; sys.exit(0)"
   end
 end
