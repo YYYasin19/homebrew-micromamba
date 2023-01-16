@@ -1,6 +1,3 @@
-# Documentation: https://docs.brew.sh/Formula-Cookbook
-#                https://rubydoc.brew.sh/Formula
-# PLEASE REMOVE ALL GENERATED COMMENTS BEFORE SUBMITTING YOUR PULL REQUEST!
 class Libsolv < Formula
   desc "Library for solving packages and reading repositories"
   homepage "https://github.com/openSUSE/libsolv"
@@ -10,30 +7,55 @@ class Libsolv < Formula
   head "https://github.com/openSUSE/libsolv"
 
   depends_on "cmake" => :build
+  depends_on "swig" => :build
 
   uses_from_macos "zlib"
 
   def install
+    args = %W[
+      -DENABLE_STATIC=ON
+      -DENABLE_SUSEREPO=ON
+      -DENABLE_COMPS=ON
+      -DENABLE_HELIXREPO=ON
+      -DENABLE_DEBIAN=ON
+      -DENABLE_MDKREPO=ON
+      -DENABLE_ARCHREPO=ON
+      -DENABLE_CUDFREPO=ON
+      -DENABLE_HAIKU=ON
+      -DENABLE_CONDA=ON
+      -DENABLE_APPDATA=ON
+      -DMULTI_SEMANTICS=ON
+      -DENABLE_LZMA_COMPRESSION=ON
+      -DENABLE_BZIP2_COMPRESSION=ON
+      -DENABLE_ZSTD_COMPRESSION=ON
+      -DENABLE_ZCHUNK_COMPRESSION=ON
+    ]
+
     mkdir "build" do
-      system "cmake", "--version"
-      system "cmake", "..", std_cmake_args
+      system "cmake", "..", *args, *std_cmake_args
       system "make"
-      lib.install "libsolv.dylib"
-      lib.install "libsolv.a"
+      lib.install "src/libsolv.dylib"
+      lib.install "src/libsolv.a"
     end
   end
 
   test do
-    # `test do` will create, run in and delete a temporary directory.
-    #
-    # This test will fail and we won't accept that! For Homebrew/homebrew-core
-    # this will need to be a test that verifies the functionality of the
-    # software. Run the test with `brew test micromamba`. Options passed
-    # to `brew install` such as `--HEAD` also need to be provided to `brew test`.
-    #
-    # The installed folder is not in the path, so use the entire path to any
-    # executables being tested: `system "#{bin}/program", "do", "something"`.
-    system "true"
+    (testpath/"test.cpp").write <<~EOS
+      #include <solv/pool.h>
+      #include <solv/repo.h>
+      #include <solv/repo_solv.h>
+      #include <solv/repo_rpmdb.h>
+
+      int main() {
+        Pool *pool = pool_create();
+        Repo *repo = repo_create(pool, "test");
+        repo_add_solv(repo, "test.solv", 0);
+        repo_add_rpmdb(repo, 0, 0);
+        pool_free(pool);
+        return 0;
+      }
+    EOS
+    system ENV.cc, "test.cpp", "-I#{include}", "-L#{lib}", "-lsolv", "-o", "test"
+    system "./test"
   end
-  end
-  
+end
