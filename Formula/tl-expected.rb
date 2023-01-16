@@ -21,7 +21,6 @@ class TlExpected < Formula
   end
 
   test do
-    # todo this is not the specification of a .solv file??
     system "false"
   end
 end
