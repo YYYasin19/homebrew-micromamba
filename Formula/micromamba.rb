@@ -1,32 +1,30 @@
 class Micromamba < Formula
-  desc "The Fast Cross-Platform Package Manager"
+  desc "Fast Cross-Platform Package Manager"
   homepage "https://github.com/mamba-org/mamba"
   url "https://github.com/mamba-org/mamba/archive/refs/tags/2023.01.16.tar.gz"
-  sha256 "a4e4cafb1e76c618db24953f5307557e5a506d682714d0ef0c700929c38411c5"
-  license "BSC-3-Clause"
   version "1.2.0"
+  sha256 "a4e4cafb1e76c618db24953f5307557e5a506d682714d0ef0c700929c38411c5"
+  license "BSD-3-Clause"
 
   depends_on "cmake" => :build
-
-  uses_from_macos "curl"
-  # depends_on "curlpp" => :build TODO?
-  uses_from_macos "zlib"
-
   depends_on "cli11"
-  depends_on "tl-expected"
-  depends_on "nlohmann-json"
-  depends_on "spdlog"
+  depends_on "curl"
   depends_on "fmt"
-  depends_on "yaml-cpp"
-  depends_on "xz"
-  depends_on "libssh2"
-  depends_on "libarchive"
   depends_on "krb5"
+  depends_on "libarchive"
   depends_on "libsolv"
-  depends_on "openssl" # TODO: libopenssl
-  depends_on "zstd"
+  depends_on "libssh2"
   depends_on "lz4"
+  depends_on "nlohmann-json"
+  depends_on "openssl"
   depends_on "reproc"
+  depends_on "spdlog"
+  depends_on "tl-expected"
+  depends_on "xz"
+  depends_on "yaml-cpp"
+  depends_on "zstd"
+
+  uses_from_macos "zlib"
 
   def install
     args = %w[

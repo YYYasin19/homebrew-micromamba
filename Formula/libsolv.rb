@@ -6,8 +6,8 @@ class Libsolv < Formula
   license "BSD-3-Clause"
 
   depends_on "cmake" => :build
-  depends_on "zstd"
   depends_on "xz"
+  depends_on "zstd"
 
   uses_from_macos "zlib"
 
@@ -38,7 +38,7 @@ class Libsolv < Formula
   end
 
   test do
-    # todo this is not the specification of a .solv file??
+    # TODO: this is not the specification of a .solv file??
     (testpath/"test.solv").write <<~EOS
       solv
 
