@@ -64,6 +64,7 @@ class Micromamba < Formula
     system "cmake", "--build", "build/"
 
     # move final executable to the correct location
+    lib.install "build/libmamba/libmamba.dylib"
     bin.install "build/micromamba/micromamba"
 
     # ENV.deparallelize  # if your formula fails when building in parallel
