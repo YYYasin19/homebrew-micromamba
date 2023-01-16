@@ -11,7 +11,7 @@ class TlExpected < Formula
 
     build_args = %W[
       -DEXPECTED_ENABLE_TESTS=OFF
-      -DCMAKE_INSTALL_LIBDIR=lib
+      -DCMAKE_INSTALL_LIBDIR=#{lib}
     ]
 
     mkdir "build" do
