@@ -59,13 +59,15 @@ class Micromamba < Formula
     ]
     # -DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake
 
-    # mkdir "build"
-    system "cmake", "-B", "build/", *(std_cmake_args + build_args)
-    system "cmake", "--build", "build/"
+    mkdir "build" do
+      system "cmake", *(std_cmake_args + build_args), ".."
+      system "make"
+      system "make", "install"
+    end
 
     # move final executable to the correct location
-    lib.install "build/libmamba/libmamba.dylib"
-    bin.install "build/micromamba/micromamba"
+    # lib.install "build/libmamba/libmamba.dylib"
+    # bin.install "build/micromamba/micromamba"
 
     # ENV.deparallelize  # if your formula fails when building in parallel
     # Remove unrecognized options if warned by configure
