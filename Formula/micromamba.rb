@@ -2,7 +2,7 @@ class Micromamba < Formula
   desc "The Fast Cross-Platform Package Manager"
   homepage "https://github.com/mamba-org/mamba"
   url "https://github.com/mamba-org/mamba/archive/refs/tags/2023.01.16.tar.gz"
-  sha256 "TODO"
+  sha256 "a4e4cafb1e76c618db24953f5307557e5a506d682714d0ef0c700929c38411c5"
   license "BSC-3-Clause"
   version "1.2.0"
 
