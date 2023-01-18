@@ -20,6 +20,35 @@ class TlExpected < Formula
   end
 
   test do
-    system "false"
+    (testpath/"test.cpp").write <<~EOS
+      #include <iostream>
+      #include <tl/expected.hpp>
+
+      tl::expected<int, std::string> divide(int a, int b) {
+        if (b == 0) {
+          return tl::make_unexpected("Division by zero");
+        }
+        return a / b;
+      }
+
+      int main() {
+        auto result = divide(10, 5);
+        if (result) {
+          std::cout << "Result: " << *result << std::endl;
+        } else {
+          std::cout << "Error: " << result.error() << std::endl;
+        }
+
+        result = divide(2, 0);
+        if (result) {
+          std::cout << "Result: " << *result << std::endl;
+        } else {
+          std::cout << "Error: " << result.error() << std::endl;
+        }
+        return 0;
+      }
+    EOS
+    system ENV.cxx, "test.cpp", "-std=c++17", "-o", "test"
+    assert_equal "Result: 2\nError: Division by zero", shell_output("./test").strip
   end
 end

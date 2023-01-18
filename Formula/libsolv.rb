@@ -38,32 +38,6 @@ class Libsolv < Formula
   end
 
   test do
-    # TODO: this is not the specification of a .solv file??
-    (testpath/"test.solv").write <<~EOS
-      solv
-
-      pool
-
-      solvable
-      name mypackage
-      version 1.0
-      arch x86_64
-      end
-
-      solvable
-      name mypackage
-      version 2.0
-      arch x86_64
-      end
-
-      repo
-
-      end
-    EOS
-
-    # no idea how the tools work
-    # system #{bin}/testsolv, "test.solv"
-
     (testpath/"test.cpp").write <<~EOS
       #include <solv/pool.h>
       #include <solv/repo.h>
@@ -71,7 +45,7 @@ class Libsolv < Formula
       int main(int argc, char **argv) {
         Pool *pool = pool_create();
 
-        Repo *repo = repo_create(pool, "test.solv");
+        Repo *repo = repo_create(pool, "test");
 
         pool_free(pool);
       }
